@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+@theme {
+    --color-navy: #001F3F;      /* Warna Navy Gelap */
+    --color-cream: #F5F5DC;     /* Warna Cream Lembut */
+    --color-gold: #D4AF37;      /* Warna tambahan untuk aksen tombol/VIP */
+  }
+
 @source "../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php";
 @source "../../storage/framework/views/*.php";
 @source "../**/*.blade.php";
