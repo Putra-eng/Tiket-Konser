@@ -65,21 +65,21 @@
                             <h3 class="text-3xl font-bold text-navy mt-4">REGULER</h3>
                             <p class="text-gray-500 mt-2 text-sm">Akses standar area festival (berdiri).</p>
                             <p class="text-3xl font-black text-navy mt-8">Rp 2.500.000</p>
-                            <button onclick="openTicketModal()" class="mt-6 w-full py-4 rounded-xl border-2 border-navy text-navy font-bold hover:bg-navy hover:text-cream transition-all uppercase text-xs">Pilih Tiket</button>
+                            <button onclick="openTicketModal(2500000)" class="mt-6 w-full py-4 rounded-xl border-2 border-navy text-navy font-bold hover:bg-navy hover:text-cream transition-all uppercase text-xs">Pilih Tiket</button>
                         </div>
                         <div class="bg-navy rounded-3xl p-8 shadow-2xl hover:-translate-y-3 transition-all transform lg:scale-105 z-10 text-cream">
                             <span class="text-[10px] bg-gold text-navy px-3 py-1 rounded-full uppercase font-bold">Terpopuler</span>
                             <h3 class="text-3xl font-bold mt-4">VIP</h3>
                             <p class="text-cream/70 mt-2 text-sm">Tempat duduk bernomor & Jalur khusus.</p>
                             <p class="text-3xl font-black mt-8 text-gold">Rp 8.000.000</p>
-                            <button onclick="openTicketModal()" class="mt-6 w-full py-4 rounded-xl bg-gold text-navy font-bold hover:bg-white transition-all uppercase text-xs">Pilih Tiket</button>
+                            <button onclick="openTicketModal(8000000)" class="mt-6 w-full py-4 rounded-xl bg-gold text-navy font-bold hover:bg-white transition-all uppercase text-xs">Pilih Tiket</button>
                         </div>
                         <div class="bg-white border-2 border-gold rounded-3xl p-8 shadow-xl hover:-translate-y-3 transition-all">
                             <span class="text-[10px] bg-gold/10 text-gold px-3 py-1 rounded-full uppercase font-bold italic">Ultimate</span>
                             <h3 class="text-3xl font-bold text-navy mt-4">VVIP</h3>
                             <p class="text-gray-500 mt-2 text-sm">Meet & Greet + Lounge Access.</p>
                             <p class="text-3xl font-black text-navy mt-8">Rp 20.000.000</p>
-                            <button onclick="openTicketModal()" class="mt-6 w-full py-4 rounded-xl bg-navy text-cream font-bold hover:bg-gold transition-all uppercase text-xs">Pilih Tiket</button>
+                            <button onclick="openTicketModal(20000000)" class="mt-6 w-full py-4 rounded-xl bg-navy text-cream font-bold hover:bg-gold transition-all uppercase text-xs">Pilih Tiket</button>
                         </div>
                     </div>
                 </div>
@@ -98,11 +98,15 @@
                         <div class="space-y-4 text-left">
                             <div>
                                 <label class="text-[10px] font-bold uppercase text-gray-400">Nama Lengkap</label>
-                                <input type="text" class="w-full border-b-2 border-gray-100 py-2 focus:border-gold outline-none" placeholder="Masukkan nama...">
+                                <input type="text" id="buyerName" class="w-full border-b-2 border-gray-100 py-2 focus:border-gold outline-none" placeholder="Masukkan nama..." required>
                             </div>
                             <div>
                                 <label class="text-[10px] font-bold uppercase text-gray-400">Email</label>
-                                <input type="email" class="w-full border-b-2 border-gray-100 py-2 focus:border-gold outline-none" placeholder="email@anda.com">
+                                <input type="email" id="buyerEmail" class="w-full border-b-2 border-gray-100 py-2 focus:border-gold outline-none" placeholder="email@anda.com" required>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-400">NO Handphone</label>
+                                <input type="text" id="buyerName" class="w-full border-b-2 border-gray-100 py-2 focus:border-gold outline-none" placeholder="Masukkan no hp aktif..." required>
                             </div>
                             <div class="flex justify-between items-center py-4">
                                 <label class="text-[10px] font-bold uppercase text-gray-400">Jumlah Tiket</label>
@@ -123,7 +127,7 @@
                         <h3 class="text-2xl font-black text-navy italic mb-2 uppercase">Konfirmasi Data</h3>
                         <p class="text-gray-500 text-sm mb-8">Pastikan data dan jumlah tiket sudah sesuai.</p>
                         <div class="space-y-3">
-                            <a href="{{ route('pembayaran') }}" id="payNowBtn" class="block w-full bg-green-600 text-white py-4 rounded-xl font-bold uppercase text-xs tracking-widest text-center shadow-lg hover:bg-green-700 transition-all">
+                            <a href="{{ route('pembayaran') }}" id="payNowBtn" class="block w-full bg-navy text-white py-4 rounded-xl font-bold uppercase text-xs tracking-widest text-center shadow-lg hover:bg-green-900 transition-all">
                                 Ya, Bayar Sekarang
                             </a>
                             <button onclick="backToData()" class="w-full py-2 text-gray-400 text-xs font-bold uppercase hover:text-navy transition-colors">Kembali Edit</button>
@@ -133,65 +137,84 @@
             </div>
         </div>
 
-        <script>
-            const modal = document.getElementById('ticketModal');
-            const stepData = document.getElementById('stepData');
-            const stepConfirm = document.getElementById('stepConfirm');
-            const countDisplay = document.getElementById('ticketCount');
-            let count = 1;
+<script>
+    const modal = document.getElementById('ticketModal');
+    const stepData = document.getElementById('stepData');
+    const stepConfirm = document.getElementById('stepConfirm');
+    const countDisplay = document.getElementById('ticketCount');
+    
+    let count = 1;
+    let selectedPrice = 0; // Variabel baru untuk menyimpan harga tiket yang dipilih
 
-            function openTicketModal() {
-                modal.classList.remove('hidden');
-                document.body.style.overflow = 'hidden';
-            }
+    function openTicketModal(price) {
+        selectedPrice = price; // Simpan harga tiket yang dipilih
+        count = 1; // Reset jumlah ke 1 setiap buka modal
+        countDisplay.innerText = count;
+        
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        updatePaymentLink();
+    }
 
-            function closeModal() {
-                modal.classList.add('hidden');
-                document.body.style.overflow = 'auto';
-                backToData();
-            }
+    function closeModal() {
+    modal.classList.add('hidden');
+    document.body.style.overflow = 'auto';
+    
+    // Reset input agar bersih kembali
+    document.getElementById('buyerName').value = "";
+    document.getElementById('buyerEmail').value = "";
+    
+    backToData();
+}
 
-            // Fungsi Update Link Pembayaran
-            function updatePaymentLink() {
-                const payBtn = document.getElementById('payNowBtn');
-                if(payBtn) {
-                    const baseUrl = "{{ route('pembayaran') }}";
-                    payBtn.href = baseUrl + "?qty=" + count;
-                }
-            }
+    function increment() { 
+        count++; 
+        countDisplay.innerText = count; 
+        updatePaymentLink();
+    }
 
-            function increment() { 
-                count++; 
-                countDisplay.innerText = count; 
-                updatePaymentLink();
-            }
+    function decrement() { 
+        if(count > 1) { 
+            count--; 
+            countDisplay.innerText = count; 
+            updatePaymentLink();
+        } 
+    }
 
-            function decrement() { 
-                if(count > 1) { 
-                    count--; 
-                    countDisplay.innerText = count; 
-                    updatePaymentLink();
-                } 
-            }
+    function updatePaymentLink() {
+        const payBtn = document.getElementById('payNowBtn');
+        if(payBtn) {
+            const baseUrl = "{{ route('pembayaran') }}";
+            // SEKARANG KITA KIRIM QTY DAN PRICE LEWAT URL
+            payBtn.href = baseUrl + "?qty=" + count + "&price=" + selectedPrice;
+        }
+    }
 
-            function showConfirmation() {
-                stepData.classList.add('hidden');
-                stepConfirm.classList.remove('hidden');
-            }
+    function showConfirmation() {
+    // 1. Ambil nilai input
+    const name = document.getElementById('buyerName').value.trim();
+    const email = document.getElementById('buyerEmail').value.trim();
 
-            function backToData() {
-                stepConfirm.classList.add('hidden');
-                stepData.classList.remove('hidden');
-            }
+    // 2. Cek apakah kosong
+    if (name === "" || email === "") {
+        alert("Mohon isi Nama dan Email terlebih dahulu!");
+        return; // Berhenti di sini, jangan lanjut ke konfirmasi
+    }
 
-            // Tutup modal jika tekan ESC
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') closeModal();
-            });
+    // 3. Cek format email sederhana (harus ada @)
+    if (!email.includes("@")) {
+        alert("Mohon masukkan format email yang benar!");
+        return;
+    }
 
-            // Jalankan update link saat halaman pertama kali dimuat
-            document.addEventListener('DOMContentLoaded', updatePaymentLink);
-        </script>
+    // Jika semua oke, baru pindah ke step konfirmasi
+    stepData.classList.add('hidden');
+    stepConfirm.classList.remove('hidden');
+}
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeModal();
+    });
+</script>
     </div>
 </body>
 </html>
