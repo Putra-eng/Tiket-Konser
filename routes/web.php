@@ -39,3 +39,7 @@ Route::delete('/admin/pemesanan/{id}', [PemesananController::class, 'destroy'])-
 
 Route::get('/admin/pembeli', [PembeliController::class, 'index'])->name('admin.pembeli.index');
 Route::delete('/admin/pembeli/{id}', [PembeliController::class, 'destroy'])->name('admin.pembeli.destroy');
+
+Route::get('/cek-tiket', function () {
+    return view('tiket_saya'); 
+});
