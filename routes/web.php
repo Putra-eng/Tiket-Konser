@@ -8,12 +8,18 @@ use App\Http\Controllers\TiketController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return redirect('/dashboard');
-});
-
-Route::get('/', function () {
     return view('dashboard');
-});
+})->name('home');
+
+// Halaman Riwayat Pembelian
+Route::get('/riwayat', function () {
+    return view('riwayat');
+})->name('riwayat');
+
+Route::get('/pembayaran', function () {
+    return view('pembayaran');
+})->name('pembayaran');
+
 
 Route::get('/admin/login', [AdminAuthController::class, 'showLogin'])->name('login');
 Route::post('/admin/login', [AdminAuthController::class, 'login'])->name('admin.login');
