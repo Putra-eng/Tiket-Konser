@@ -47,11 +47,11 @@ class ConcertTicketingSeeder extends Seeder
         }
 
         $pembeli_data = [
-            ['nama' => 'Khotami', 'no_hp' => '081234567890'],
-            ['nama' => 'Hafzi', 'no_hp' => '082345678901'],
-            ['nama' => 'Zaki', 'no_hp' => '083456789012'],
-            ['nama' => 'Robby Panjoro', 'no_hp' => '084567890123'],
-            ['nama' => 'Siapa nyakk', 'no_hp' => '085678901234'],
+            ['nama' => 'Khotami', 'no_hp' => '081234567890', 'email' => 'khotami@example.com'],
+            ['nama' => 'Hafzi', 'no_hp' => '082345678901', 'email' => 'hafzi@example.com'],
+            ['nama' => 'Zaki', 'no_hp' => '083456789012', 'email' => 'zaki@example.com'],
+            ['nama' => 'Robby Panjoro', 'no_hp' => '084567890123', 'email' => 'robby@example.com'],
+            ['nama' => 'Siapa nyakk', 'no_hp' => '085678901234', 'email' => 'siapanyakk@example.com'],
         ];
 
         foreach ($pembeli_data as $pembeli) {

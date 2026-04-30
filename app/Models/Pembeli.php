@@ -9,7 +9,7 @@ class Pembeli extends Model
     protected $table = 'pembeli';
     protected $primaryKey = 'id_pembeli';
 
-    protected $fillable = ['nama', 'no_hp'];
+    protected $fillable = ['nama', 'no_hp', 'email'];
 
     public function pemesanan()
     {
