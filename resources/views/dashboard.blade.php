@@ -17,7 +17,6 @@
                     <h2 class="text-2xl font-light tracking-[0.4em] -mt-2">MARS</h2>
                     <p class="text-[10px] uppercase tracking-widest mt-4 text-cream/50">Live in Concert 2026</p>
                 </div>
-                
                 <nav class="space-y-4">
                     <a href="{{ route('home') }}" class="flex items-center gap-4 p-4 rounded-2xl bg-cream/10 border border-cream/20 group transition-all duration-300">
                         <div class="p-2 bg-gold rounded-lg shadow-lg shadow-gold/20">
@@ -27,7 +26,6 @@
                         </div>
                         <span class="font-bold uppercase text-xs tracking-widest">Beranda</span>
                     </a>
-
                     <a href="{{ route('riwayat') }}" class="flex items-center gap-4 p-4 rounded-2xl border border-transparent hover:bg-cream/5 hover:border-cream/10 transition-all group">
                         <div class="p-2 bg-cream/10 rounded-lg group-hover:bg-gold transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-cream group-hover:text-navy" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -59,54 +57,113 @@
                         <h2 class="text-5xl font-black text-navy uppercase tracking-tighter mb-4 italic">Pilih Kategori Tiket</h2>
                         <div class="h-1.5 w-24 bg-gold mx-auto"></div>
                     </div>
+
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        <div class="bg-white border border-gray-100 rounded-3xl p-8 shadow-xl hover:-translate-y-3 transition-all">
-                            <span class="text-[10px] bg-gray-100 text-gray-500 px-3 py-1 rounded-full uppercase font-bold">Festival</span>
-                            <h3 class="text-3xl font-bold text-navy mt-4">REGULER</h3>
-                            <p class="text-gray-500 mt-2 text-sm">Akses standar area festival (berdiri).</p>
-                            <p class="text-3xl font-black text-navy mt-8">Rp 2.500.000</p>
-                            <button onclick="openTicketModal(2500000)" class="mt-6 w-full py-4 rounded-xl border-2 border-navy text-navy font-bold hover:bg-navy hover:text-cream transition-all uppercase text-xs">Pilih Tiket</button>
-                        </div>
-                        <div class="bg-navy rounded-3xl p-8 shadow-2xl hover:-translate-y-3 transition-all transform lg:scale-105 z-10 text-cream">
-                            <span class="text-[10px] bg-gold text-navy px-3 py-1 rounded-full uppercase font-bold">Terpopuler</span>
-                            <h3 class="text-3xl font-bold mt-4">VIP</h3>
-                            <p class="text-cream/70 mt-2 text-sm">Tempat duduk bernomor & Jalur khusus.</p>
-                            <p class="text-3xl font-black mt-8 text-gold">Rp 8.000.000</p>
-                            <button onclick="openTicketModal(8000000)" class="mt-6 w-full py-4 rounded-xl bg-gold text-navy font-bold hover:bg-white transition-all uppercase text-xs">Pilih Tiket</button>
-                        </div>
-                        <div class="bg-white border-2 border-gold rounded-3xl p-8 shadow-xl hover:-translate-y-3 transition-all">
-                            <span class="text-[10px] bg-gold/10 text-gold px-3 py-1 rounded-full uppercase font-bold italic">Ultimate</span>
-                            <h3 class="text-3xl font-bold text-navy mt-4">VVIP</h3>
-                            <p class="text-gray-500 mt-2 text-sm">Meet & Greet + Lounge Access.</p>
-                            <p class="text-3xl font-black text-navy mt-8">Rp 20.000.000</p>
-                            <button onclick="openTicketModal(20000000)" class="mt-6 w-full py-4 rounded-xl bg-navy text-cream font-bold hover:bg-gold transition-all uppercase text-xs">Pilih Tiket</button>
-                        </div>
+                        @foreach ($tikets as $tiket)
+                            @php
+                                $isVip      = strtoupper($tiket->kategori) === 'VIP';
+                                $isVvip     = strtoupper($tiket->kategori) === 'VVIP';
+                                $habis      = $tiket->stok <= 0;
+                                $formatter  = new NumberFormatter('id_ID', NumberFormatter::CURRENCY);
+                            @endphp
+
+                            @if ($isVip)
+                            {{-- Kartu VIP - Featured --}}
+                            <div class="bg-navy rounded-3xl p-8 shadow-2xl hover:-translate-y-3 transition-all transform lg:scale-105 z-10 text-cream {{ $habis ? 'opacity-60' : '' }}">
+                                <span class="text-[10px] bg-gold text-navy px-3 py-1 rounded-full uppercase font-bold">Terpopuler</span>
+                                <h3 class="text-3xl font-bold mt-4">{{ strtoupper($tiket->kategori) }}</h3>
+                                <p class="text-cream/70 mt-2 text-sm">Tempat duduk bernomor &amp; Jalur khusus.</p>
+                                <p class="text-3xl font-black mt-8 text-gold">
+                                    Rp {{ number_format($tiket->harga, 0, ',', '.') }}
+                                </p>
+                                <div class="mt-4 flex items-center gap-2">
+                                    <span class="text-[10px] font-bold uppercase tracking-widest {{ $habis ? 'text-red-400' : 'text-cream/60' }}">
+                                        Stok: {{ $habis ? 'Habis' : $tiket->stok . ' tiket' }}
+                                    </span>
+                                </div>
+                                <button
+                                    onclick="openTicketModal({{ $tiket->id_tiket }}, {{ $tiket->harga }}, '{{ $tiket->kategori }}')"
+                                    {{ $habis ? 'disabled' : '' }}
+                                    class="mt-6 w-full py-4 rounded-xl bg-gold text-navy font-bold hover:bg-white transition-all uppercase text-xs {{ $habis ? 'opacity-50 cursor-not-allowed' : '' }}">
+                                    {{ $habis ? 'Stok Habis' : 'Pilih Tiket' }}
+                                </button>
+                            </div>
+
+                            @elseif ($isVvip)
+                            {{-- Kartu VVIP --}}
+                            <div class="bg-white border-2 border-gold rounded-3xl p-8 shadow-xl hover:-translate-y-3 transition-all {{ $habis ? 'opacity-60' : '' }}">
+                                <span class="text-[10px] bg-gold/10 text-gold px-3 py-1 rounded-full uppercase font-bold italic">Ultimate</span>
+                                <h3 class="text-3xl font-bold text-navy mt-4">{{ strtoupper($tiket->kategori) }}</h3>
+                                <p class="text-gray-500 mt-2 text-sm">Meet &amp; Greet + Lounge Access.</p>
+                                <p class="text-3xl font-black text-navy mt-8">
+                                    Rp {{ number_format($tiket->harga, 0, ',', '.') }}
+                                </p>
+                                <div class="mt-4">
+                                    <span class="text-[10px] font-bold uppercase tracking-widest {{ $habis ? 'text-red-500' : 'text-gray-400' }}">
+                                        Stok: {{ $habis ? 'Habis' : $tiket->stok . ' tiket' }}
+                                    </span>
+                                </div>
+                                <button
+                                    onclick="openTicketModal({{ $tiket->id_tiket }}, {{ $tiket->harga }}, '{{ $tiket->kategori }}')"
+                                    {{ $habis ? 'disabled' : '' }}
+                                    class="mt-6 w-full py-4 rounded-xl bg-navy text-cream font-bold hover:bg-gold transition-all uppercase text-xs {{ $habis ? 'opacity-50 cursor-not-allowed' : '' }}">
+                                    {{ $habis ? 'Stok Habis' : 'Pilih Tiket' }}
+                                </button>
+                            </div>
+
+                            @else
+                            {{-- Kartu Reguler / default --}}
+                            <div class="bg-white border border-gray-100 rounded-3xl p-8 shadow-xl hover:-translate-y-3 transition-all {{ $habis ? 'opacity-60' : '' }}">
+                                <span class="text-[10px] bg-gray-100 text-gray-500 px-3 py-1 rounded-full uppercase font-bold">Festival</span>
+                                <h3 class="text-3xl font-bold text-navy mt-4">{{ strtoupper($tiket->kategori) }}</h3>
+                                <p class="text-gray-500 mt-2 text-sm">Akses standar area festival (berdiri).</p>
+                                <p class="text-3xl font-black text-navy mt-8">
+                                    Rp {{ number_format($tiket->harga, 0, ',', '.') }}
+                                </p>
+                                <div class="mt-4">
+                                    <span class="text-[10px] font-bold uppercase tracking-widest {{ $habis ? 'text-red-500' : 'text-gray-400' }}">
+                                        Stok: {{ $habis ? 'Habis' : $tiket->stok . ' tiket' }}
+                                    </span>
+                                </div>
+                                <button
+                                    onclick="openTicketModal({{ $tiket->id_tiket }}, {{ $tiket->harga }}, '{{ $tiket->kategori }}')"
+                                    {{ $habis ? 'disabled' : '' }}
+                                    class="mt-6 w-full py-4 rounded-xl border-2 border-navy text-navy font-bold hover:bg-navy hover:text-cream transition-all uppercase text-xs {{ $habis ? 'opacity-50 cursor-not-allowed' : '' }}">
+                                    {{ $habis ? 'Stok Habis' : 'Pilih Tiket' }}
+                                </button>
+                            </div>
+                            @endif
+                        @endforeach
                     </div>
                 </div>
             </section>
         </main>
 
+        {{-- ===================== MODAL ===================== --}}
         <div id="ticketModal" class="fixed inset-0 z-[100] hidden">
             <div class="fixed inset-0 bg-navy/90 backdrop-blur-md" onclick="closeModal()"></div>
-            
+
             <div class="flex min-h-screen items-center justify-center p-4">
                 <div class="relative z-[110] w-full max-w-md rounded-3xl bg-white p-8 shadow-2xl">
                     <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-navy text-2xl">✕</button>
 
+                    {{-- Step 1: Isi Data --}}
                     <div id="stepData">
-                        <h3 class="text-2xl font-black text-navy uppercase italic mb-6">Informasi Pembeli</h3>
+                        <h3 class="text-2xl font-black text-navy uppercase italic mb-1">Informasi Pembeli</h3>
+                        <p id="modalKategoriLabel" class="text-[10px] font-bold text-gold uppercase tracking-widest mb-6">—</p>
+
                         <div class="space-y-4 text-left">
                             <div>
                                 <label class="text-[10px] font-bold uppercase text-gray-400">Nama Lengkap</label>
-                                <input type="text" id="buyerName" class="w-full border-b-2 border-gray-100 py-2 focus:border-gold outline-none" placeholder="Masukkan nama..." required>
+                                <input type="text" id="buyerName" class="w-full border-b-2 border-gray-100 py-2 focus:border-gold outline-none" placeholder="Masukkan nama...">
                             </div>
                             <div>
                                 <label class="text-[10px] font-bold uppercase text-gray-400">Email</label>
-                                <input type="email" id="buyerEmail" class="w-full border-b-2 border-gray-100 py-2 focus:border-gold outline-none" placeholder="email@anda.com" required>
+                                <input type="email" id="buyerEmail" class="w-full border-b-2 border-gray-100 py-2 focus:border-gold outline-none" placeholder="email@anda.com">
                             </div>
                             <div>
-                                <label class="text-[10px] font-bold uppercase text-gray-400">NO Handphone</label>
-                                <input type="text" id="buyerName" class="w-full border-b-2 border-gray-100 py-2 focus:border-gold outline-none" placeholder="Masukkan no hp aktif..." required>
+                                <label class="text-[10px] font-bold uppercase text-gray-400">No Handphone</label>
+                                <input type="text" id="buyerPhone" class="w-full border-b-2 border-gray-100 py-2 focus:border-gold outline-none" placeholder="Masukkan no hp aktif...">
                             </div>
                             <div class="flex justify-between items-center py-4">
                                 <label class="text-[10px] font-bold uppercase text-gray-400">Jumlah Tiket</label>
@@ -116,105 +173,176 @@
                                     <button onclick="increment()" class="text-navy font-bold text-xl hover:text-gold transition-colors">+</button>
                                 </div>
                             </div>
+                            <div class="flex justify-between items-center bg-gray-50 rounded-xl px-4 py-3">
+                                <span class="text-[10px] font-bold uppercase text-gray-400">Subtotal</span>
+                                <span id="subtotalDisplay" class="font-black text-navy text-sm">Rp 0</span>
+                            </div>
                         </div>
-                        <button onclick="showConfirmation()" class="w-full bg-navy text-cream py-4 rounded-xl font-bold mt-6 hover:bg-gold hover:text-navy transition-all uppercase text-xs tracking-widest text-center">Lanjut Konfirmasi</button>
+                        <button onclick="showConfirmation()" class="w-full bg-navy text-cream py-4 rounded-xl font-bold mt-6 hover:bg-gold hover:text-navy transition-all uppercase text-xs tracking-widest">
+                            Lanjut Konfirmasi
+                        </button>
                     </div>
 
+                    {{-- Step 2: Konfirmasi --}}
                     <div id="stepConfirm" class="hidden text-center">
                         <div class="w-16 h-16 bg-gold/20 text-gold rounded-full flex items-center justify-center mx-auto mb-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
                         </div>
                         <h3 class="text-2xl font-black text-navy italic mb-2 uppercase">Konfirmasi Data</h3>
-                        <p class="text-gray-500 text-sm mb-8">Pastikan data dan jumlah tiket sudah sesuai.</p>
+                        <p class="text-gray-500 text-sm mb-2">Pastikan data dan jumlah tiket sudah sesuai.</p>
+
+                        {{-- Ringkasan --}}
+                        <div class="bg-gray-50 rounded-2xl p-4 text-left mb-6 space-y-2">
+                            <div class="flex justify-between text-xs">
+                                <span class="text-gray-400 font-bold uppercase">Nama</span>
+                                <span id="confirmNama" class="font-bold text-navy">—</span>
+                            </div>
+                            <div class="flex justify-between text-xs">
+                                <span class="text-gray-400 font-bold uppercase">Email</span>
+                                <span id="confirmEmail" class="font-bold text-navy">—</span>
+                            </div>
+                            <div class="flex justify-between text-xs">
+                                <span class="text-gray-400 font-bold uppercase">Kategori</span>
+                                <span id="confirmKategori" class="font-bold text-navy">—</span>
+                            </div>
+                            <div class="flex justify-between text-xs">
+                                <span class="text-gray-400 font-bold uppercase">Jumlah</span>
+                                <span id="confirmJumlah" class="font-bold text-navy">—</span>
+                            </div>
+                            <div class="flex justify-between text-xs border-t pt-2 mt-2">
+                                <span class="text-gray-400 font-bold uppercase">Total</span>
+                                <span id="confirmTotal" class="font-black text-gold">—</span>
+                            </div>
+                        </div>
+
                         <div class="space-y-3">
-                            <a href="{{ route('pembayaran') }}" id="payNowBtn" class="block w-full bg-navy text-white py-4 rounded-xl font-bold uppercase text-xs tracking-widest text-center shadow-lg hover:bg-green-900 transition-all">
+                            <button onclick="submitPemesanan()" class="block w-full bg-navy text-white py-4 rounded-xl font-bold uppercase text-xs tracking-widest text-center shadow-lg hover:bg-green-900 transition-all">
                                 Ya, Bayar Sekarang
-                            </a>
-                            <button onclick="backToData()" class="w-full py-2 text-gray-400 text-xs font-bold uppercase hover:text-navy transition-colors">Kembali Edit</button>
+                            </button>
+                            <button onclick="backToData()" class="w-full py-2 text-gray-400 text-xs font-bold uppercase hover:text-navy transition-colors">
+                                Kembali Edit
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-<script>
-    const modal = document.getElementById('ticketModal');
-    const stepData = document.getElementById('stepData');
-    const stepConfirm = document.getElementById('stepConfirm');
-    const countDisplay = document.getElementById('ticketCount');
-    
-    let count = 1;
-    let selectedPrice = 0; // Variabel baru untuk menyimpan harga tiket yang dipilih
+        {{-- Form tersembunyi untuk submit ke server --}}
+        <form id="pemesananForm" action="{{ route('pemesanan.store') }}" method="POST" class="hidden">
+            @csrf
+            <input type="hidden" name="nama"     id="formNama">
+            <input type="hidden" name="email"    id="formEmail">
+            <input type="hidden" name="no_hp"    id="formNoHp">
+            <input type="hidden" name="jumlah"   id="formJumlah">
+            <input type="hidden" name="id_tiket" id="formTiketId">
+        </form>
 
-    function openTicketModal(price) {
-        selectedPrice = price; // Simpan harga tiket yang dipilih
-        count = 1; // Reset jumlah ke 1 setiap buka modal
-        countDisplay.innerText = count;
-        
-        modal.classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-        updatePaymentLink();
-    }
-
-    function closeModal() {
-    modal.classList.add('hidden');
-    document.body.style.overflow = 'auto';
-    
-    // Reset input agar bersih kembali
-    document.getElementById('buyerName').value = "";
-    document.getElementById('buyerEmail').value = "";
-    
-    backToData();
-}
-
-    function increment() { 
-        count++; 
-        countDisplay.innerText = count; 
-        updatePaymentLink();
-    }
-
-    function decrement() { 
-        if(count > 1) { 
-            count--; 
-            countDisplay.innerText = count; 
-            updatePaymentLink();
-        } 
-    }
-
-    function updatePaymentLink() {
-        const payBtn = document.getElementById('payNowBtn');
-        if(payBtn) {
-            const baseUrl = "{{ route('pembayaran') }}";
-            // SEKARANG KITA KIRIM QTY DAN PRICE LEWAT URL
-            payBtn.href = baseUrl + "?qty=" + count + "&price=" + selectedPrice;
-        }
-    }
-
-    function showConfirmation() {
-    // 1. Ambil nilai input
-    const name = document.getElementById('buyerName').value.trim();
-    const email = document.getElementById('buyerEmail').value.trim();
-
-    // 2. Cek apakah kosong
-    if (name === "" || email === "") {
-        alert("Mohon isi Nama dan Email terlebih dahulu!");
-        return; // Berhenti di sini, jangan lanjut ke konfirmasi
-    }
-
-    // 3. Cek format email sederhana (harus ada @)
-    if (!email.includes("@")) {
-        alert("Mohon masukkan format email yang benar!");
-        return;
-    }
-
-    // Jika semua oke, baru pindah ke step konfirmasi
-    stepData.classList.add('hidden');
-    stepConfirm.classList.remove('hidden');
-}
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closeModal();
-    });
-</script>
     </div>
+
+    <script>
+        const modal       = document.getElementById('ticketModal');
+        const stepData    = document.getElementById('stepData');
+        const stepConfirm = document.getElementById('stepConfirm');
+        const countDisplay = document.getElementById('ticketCount');
+
+        let count            = 1;
+        let selectedPrice    = 0;
+        let selectedTiketId  = null;
+        let selectedKategori = '';
+
+        const rupiahFormat = (n) =>
+            'Rp ' + new Intl.NumberFormat('id-ID').format(n);
+
+        function openTicketModal(tiketId, price, kategori) {
+            selectedTiketId  = tiketId;
+            selectedPrice    = price;
+            selectedKategori = kategori;
+            count = 1;
+
+            countDisplay.innerText = count;
+            document.getElementById('modalKategoriLabel').innerText =
+                kategori.toUpperCase() + ' — ' + rupiahFormat(price) + ' / tiket';
+            updateSubtotal();
+
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            stepData.classList.remove('hidden');
+            stepConfirm.classList.add('hidden');
+        }
+
+        function closeModal() {
+            modal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+            document.getElementById('buyerName').value  = '';
+            document.getElementById('buyerEmail').value = '';
+            document.getElementById('buyerPhone').value = '';
+            backToData();
+        }
+
+        function increment() {
+            count++;
+            countDisplay.innerText = count;
+            updateSubtotal();
+        }
+
+        function decrement() {
+            if (count > 1) {
+                count--;
+                countDisplay.innerText = count;
+                updateSubtotal();
+            }
+        }
+
+        function updateSubtotal() {
+            document.getElementById('subtotalDisplay').innerText =
+                rupiahFormat(count * selectedPrice);
+        }
+
+        function showConfirmation() {
+            const name  = document.getElementById('buyerName').value.trim();
+            const email = document.getElementById('buyerEmail').value.trim();
+            const phone = document.getElementById('buyerPhone').value.trim();
+
+            if (!name || !email || !phone) {
+                alert('Mohon isi semua data terlebih dahulu!');
+                return;
+            }
+            if (!email.includes('@')) {
+                alert('Mohon masukkan format email yang benar!');
+                return;
+            }
+
+            // Isi ringkasan konfirmasi
+            document.getElementById('confirmNama').innerText     = name;
+            document.getElementById('confirmEmail').innerText    = email;
+            document.getElementById('confirmKategori').innerText = selectedKategori.toUpperCase();
+            document.getElementById('confirmJumlah').innerText   = count + ' tiket';
+            document.getElementById('confirmTotal').innerText    = rupiahFormat(count * selectedPrice);
+
+            stepData.classList.add('hidden');
+            stepConfirm.classList.remove('hidden');
+        }
+
+        function backToData() {
+            stepConfirm.classList.add('hidden');
+            stepData.classList.remove('hidden');
+        }
+
+        function submitPemesanan() {
+            document.getElementById('formNama').value    = document.getElementById('buyerName').value;
+            document.getElementById('formEmail').value   = document.getElementById('buyerEmail').value;
+            document.getElementById('formNoHp').value    = document.getElementById('buyerPhone').value;
+            document.getElementById('formJumlah').value  = count;
+            document.getElementById('formTiketId').value = selectedTiketId;
+            document.getElementById('pemesananForm').submit();
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
 </body>
 </html>
