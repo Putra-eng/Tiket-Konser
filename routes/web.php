@@ -7,7 +7,11 @@ use App\Http\Controllers\PemesananController;
 use App\Http\Controllers\TiketController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [PemesananController::class, 'index'])->name('home');
+Route::get('/', function () {
+    return view('welcome');
+})->name('welcome');
+
+Route::get('/tiket', [PemesananController::class, 'index'])->name('home');
 
 // Halaman Riwayat Pembelian
 Route::get('/riwayat', function () {

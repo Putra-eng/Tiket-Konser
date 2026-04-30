@@ -1,3 +1,4 @@
+{{-- dashboard.blade.php --}}
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -18,7 +19,7 @@
                     <p class="text-[10px] uppercase tracking-widest mt-4 text-cream/50">Live in Concert 2026</p>
                 </div>
                 <nav class="space-y-4">
-                    <a href="{{ route('home') }}" class="flex items-center gap-4 p-4 rounded-2xl bg-cream/10 border border-cream/20 group transition-all duration-300">
+                    <a href="{{ route('welcome') }}" class="flex items-center gap-4 p-4 rounded-2xl bg-cream/10 border border-cream/20 group transition-all duration-300">
                         <div class="p-2 bg-gold rounded-lg shadow-lg shadow-gold/20">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-navy" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
